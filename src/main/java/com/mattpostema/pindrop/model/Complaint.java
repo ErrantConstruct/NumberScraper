@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * Created by mpostema on 2/13/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Entry {
+public class Complaint {
     private String areaCode;
     private String phoneNumber;
     private Integer numberReports;
