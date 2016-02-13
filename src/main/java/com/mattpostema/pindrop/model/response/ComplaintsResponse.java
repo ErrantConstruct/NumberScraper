@@ -11,6 +11,14 @@ import java.util.List;
 public class ComplaintsResponse extends Response {
     private List<Complaint> complaints;
 
+    public ComplaintsResponse() {
+    }
+
+    public ComplaintsResponse(String statusMessage, Integer statusCode, List<Complaint> complaints) {
+        super(statusMessage, statusCode);
+        this.complaints = complaints;
+    }
+
     public List<Complaint> getComplaints() {
         return complaints;
     }
