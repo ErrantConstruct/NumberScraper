@@ -1,6 +1,6 @@
 package com.mattpostema.pindrop.rest;
 
-import com.mattpostema.pindrop.model.EntriesResponse;
+import com.mattpostema.pindrop.model.response.EntriesResponse;
 import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;

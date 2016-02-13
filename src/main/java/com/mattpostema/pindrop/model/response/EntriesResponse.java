@@ -1,4 +1,4 @@
-package com.mattpostema.pindrop.model;
+package com.mattpostema.pindrop.model.response;
 
 /**
  * Response for a collection of phone number entries

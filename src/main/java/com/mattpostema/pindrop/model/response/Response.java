@@ -1,4 +1,4 @@
-package com.mattpostema.pindrop.model;
+package com.mattpostema.pindrop.model.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
