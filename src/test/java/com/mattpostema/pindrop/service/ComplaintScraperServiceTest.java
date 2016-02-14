@@ -43,6 +43,12 @@ public class ComplaintScraperServiceTest {
 
     @Test
     public void testGetComplaintsByAreaCode() throws Exception {
-
+        List<Complaint> complaints = complaintService.getComplaintsByAreaCode("855");
+        assertNotNull(complaints);
+        assertThat(complaints.size(), Matchers.greaterThan(0));
+        assertThat(complaints.get(0).getAreaCode(), Matchers.is("855"));
+        assertThat(complaints.get(0).getComment(), Matchers.notNullValue());
+        assertThat(complaints.get(0).getNumberReports(), Matchers.notNullValue());
+        assertThat(complaints.get(0).getPhoneNumber(), Matchers.notNullValue());
     }
 }
