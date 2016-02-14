@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Scrapes the 800notes site for complaint entries and converts them to the model
@@ -23,36 +25,56 @@ public class ComplaintScraperService implements ComplaintService {
     @Value("${complaint.scraper.service.external.host:http://800notes.com}")
     private String externalSite;
 
+    @Value("${complaint.scraper.service.local:false}")
+    private boolean localMode;
+
     @Override
     public List<Complaint> getComplaints() throws IOException {
-        //retrieve HTML from page
-//        Document phoneDoc = Jsoup.connect(externalSite).get();
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("local-800notes.html").getFile());
-        Document phoneDoc = Jsoup.parse(file, "UTF-8", externalSite);
-
-        //find Latest Entries list
-        Element postPreviews = phoneDoc.getElementById("postPreviews");
-        Elements previews = postPreviews.getElementsByClass("oos_listItem");
+        Elements previews = getElements();
 
         //process each entry into Complaint model
         List<Complaint> complaints = new ArrayList<Complaint>();
-        for (Element preview :
-                previews) {
-            Complaint complaint = new Complaint();
-            complaint.setAreaCode(preview.getElementsByClass("wideScrOnly").get(0).child(0).text());
-            complaint.setComment(preview.getElementsByClass("oos_previewBody").text());
-            complaint.setNumberReports(Integer.parseInt(preview.getElementsByClass("postCount").text()));
-            complaint.setPhoneNumber(preview.getElementsByClass("oos_previewTitle").text());
-            complaints.add(complaint);
+        for (Element preview : previews) {
+            complaints.add(new Complaint(preview));
         }
 
         return complaints;
     }
 
+    private Elements getElements() throws IOException {
+        //retrieve HTML from page
+        Document phoneDoc;
+        if (localMode) {
+            ClassLoader classLoader = getClass().getClassLoader();
+            File file = new File(classLoader.getResource("local-800notes.html").getFile());
+            phoneDoc = Jsoup.parse(file, "UTF-8", externalSite);
+        } else {
+            phoneDoc = Jsoup.connect(externalSite).get();
+        }
+
+        //find Latest Entries list
+        Element postPreviews = phoneDoc.getElementById("postPreviews");
+        return postPreviews.getElementsByClass("oos_listItem");
+    }
+
     @Override
-    public List<Complaint> getComplaintsByAreaCode(String areaCode) {
-        return null;
+    public List<Complaint> getComplaintsByAreaCode(String areaCode) throws IOException {
+        Elements previews = getElements();
+
+        Map<String, List<Complaint>> complaints = new HashMap<String, List<Complaint>>();
+        for (Element preview : previews) {
+            Complaint complaint = new Complaint(preview);
+
+            if (complaints.containsKey(complaint.getAreaCode())) {
+                complaints.get(complaint.getAreaCode()).add(complaint);
+            } else {
+                List<Complaint> sublist = new ArrayList<Complaint>();
+                sublist.add(complaint);
+                complaints.put(complaint.getAreaCode(), sublist);
+            }
+        }
+
+        return complaints.get(areaCode);
     }
 
 

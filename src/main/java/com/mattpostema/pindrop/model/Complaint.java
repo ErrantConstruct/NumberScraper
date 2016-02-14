@@ -1,6 +1,7 @@
 package com.mattpostema.pindrop.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.jsoup.nodes.Element;
 
 /**
  * Represents a complaint entry
@@ -12,6 +13,16 @@ public class Complaint {
     private String phoneNumber;
     private Integer numberReports;
     private String comment;
+
+    public Complaint() {
+    }
+
+    public Complaint(Element element) {
+        this.setAreaCode(element.getElementsByClass("wideScrOnly").get(0).child(0).text());
+        this.setComment(element.getElementsByClass("oos_previewBody").text());
+        this.setNumberReports(Integer.parseInt(element.getElementsByClass("postCount").text()));
+        this.setPhoneNumber(element.getElementsByClass("oos_previewTitle").text());
+    }
 
     public String getAreaCode() {
         return areaCode;

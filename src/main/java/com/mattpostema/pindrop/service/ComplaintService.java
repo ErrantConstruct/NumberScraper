@@ -11,5 +11,5 @@ import java.util.List;
 public interface ComplaintService {
     List<Complaint> getComplaints() throws IOException;
 
-    List<Complaint> getComplaintsByAreaCode(String areaCode);
+    List<Complaint> getComplaintsByAreaCode(String areaCode) throws IOException;
 }
