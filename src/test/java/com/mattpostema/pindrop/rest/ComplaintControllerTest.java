@@ -3,6 +3,7 @@ package com.mattpostema.pindrop.rest;
 import com.mattpostema.pindrop.Application;
 import com.mattpostema.pindrop.model.response.ComplaintsResponse;
 import org.hamcrest.Matchers;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.TestRestTemplate;
@@ -42,10 +43,16 @@ public class ComplaintControllerTest {
 
     @org.junit.Test
     public void testGetComplaintsByAreaCode() throws Exception {
-        ResponseEntity<ComplaintsResponse> result = template.getForEntity(HOST + "/complaints/404", ComplaintsResponse.class);
+        ResponseEntity<ComplaintsResponse> result = template.getForEntity(HOST + "/complaints/012", ComplaintsResponse.class);
         assertThat(result.getStatusCode(), Matchers.is(HttpStatus.OK));
         assertThat(result.getBody().getStatusCode(), Matchers.is(200));
         assertThat(result.getBody().getStatusMessage(), Matchers.is("Success"));
         assertThat(result.getBody().getComplaints(), Matchers.notNullValue());
+    }
+
+    @Test
+    public void testGetComplaintsByBadAreaCode() throws Exception {
+        ResponseEntity<ComplaintsResponse> result = template.getForEntity(HOST + "/complaints/404", ComplaintsResponse.class);
+        assertThat(result.getStatusCode(), Matchers.is(HttpStatus.NOT_FOUND));
     }
 }

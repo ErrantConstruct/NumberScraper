@@ -1,5 +1,6 @@
 package com.mattpostema.pindrop.rest;
 
+import com.mattpostema.pindrop.exception.AreaCodeNotFoundException;
 import com.mattpostema.pindrop.exception.ServiceException;
 import com.mattpostema.pindrop.model.Complaint;
 import com.mattpostema.pindrop.model.response.ComplaintsResponse;
@@ -49,6 +50,23 @@ public class ComplaintController {
 
     @RequestMapping(value = "/{areaCode}", method = RequestMethod.GET)
     public ComplaintsResponse getComplaintsByAreaCode(@PathVariable String areaCode) {
-        return new ComplaintsResponse();
+        log.info("GET request to /complaints/" + areaCode);
+
+        List<Complaint> complaints;
+        try {
+            complaints = complaintService.getComplaintsByAreaCode(areaCode);
+        } catch (IOException e) {
+            log.error("There was a problem retrieving complaint entries", e);
+            throw new ServiceException("There was a problem retrieving complaint entries", e);
+        }
+
+        if (complaints == null) {
+            //there were no complaints for the area code
+            log.info("No complains found for area code " + areaCode);
+            throw new AreaCodeNotFoundException();
+        }
+
+        log.info("Returning " + complaints.size() + " complaints");
+        return new ComplaintsResponse(STATUS_MESSAGE_SUCCESS, STATUS_CODE_SUCCESS, complaints);
     }
 }
